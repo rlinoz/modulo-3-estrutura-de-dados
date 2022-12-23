@@ -1,4 +1,4 @@
-package com.rlinoz.aula1_demo.listas
+package com.rlinoz.modulo3_estrutura_de_dados.listas
 
 import java.util.LinkedList
 

@@ -1,10 +1,7 @@
-package com.rlinoz.aula1_demo.filas
+package com.rlinoz.modulo3_estrutura_de_dados.filas
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.N)
 class TicketManager2 {
 
     private val queue: Queue<TicketRequest> = PriorityQueue { new, inQueue ->
@@ -32,7 +29,6 @@ class TicketManager2 {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
 fun main() {
     val ticketManager = TicketManager2()
 

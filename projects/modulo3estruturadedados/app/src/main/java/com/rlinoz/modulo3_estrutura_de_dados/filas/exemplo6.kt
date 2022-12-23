@@ -1,7 +1,5 @@
-package com.rlinoz.aula1_demo.filas
+package com.rlinoz.modulo3_estrutura_de_dados.filas
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.*
 
 /*
@@ -14,7 +12,6 @@ data class Person(val name: String, val age: Int)
 
 data class Node(val person: Person, val timestamp: Long) // Node com timestamp permite que matenhamos a ordem de chegada
 
-@RequiresApi(Build.VERSION_CODES.N)
 class Bank {
     private val queue: PriorityQueue<Node> = PriorityQueue<Node> { o1, o2 ->
         if (o1.person.age > 60 && o2.person.age > 60) {
@@ -41,7 +38,6 @@ class Bank {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
 fun main() {
     val bank = Bank()
     bank.add(Person(name = "Clarice", 15))

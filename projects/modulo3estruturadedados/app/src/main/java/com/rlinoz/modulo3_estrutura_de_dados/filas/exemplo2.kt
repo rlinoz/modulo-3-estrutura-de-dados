@@ -1,4 +1,4 @@
-package com.rlinoz.aula1_demo.filas
+package com.rlinoz.modulo3_estrutura_de_dados.filas
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

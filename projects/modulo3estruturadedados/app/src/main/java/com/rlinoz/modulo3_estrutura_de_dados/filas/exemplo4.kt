@@ -1,11 +1,8 @@
-package com.rlinoz.aula1_demo.filas
+package com.rlinoz.modulo3_estrutura_de_dados.filas
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import java.util.PriorityQueue
+import java.util.*
 
 
-@RequiresApi(Build.VERSION_CODES.N)
 fun main() {
      val queue: PriorityQueue<Int> = PriorityQueue { new, inQueue ->
           // > 0, < 0, == 0

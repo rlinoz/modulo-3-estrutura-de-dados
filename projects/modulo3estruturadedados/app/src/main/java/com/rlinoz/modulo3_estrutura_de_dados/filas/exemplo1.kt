@@ -1,7 +1,6 @@
-package com.rlinoz.aula1_demo.filas
+package com.rlinoz.modulo3_estrutura_de_dados.filas
 
-import java.util.LinkedList
-import java.util.Queue
+import java.util.*
 
 class QueueManager<T> {
     private val queue: ArrayList<T> = ArrayList<T>()
