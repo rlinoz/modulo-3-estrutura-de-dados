@@ -1,6 +1,14 @@
 package com.rlinoz.modulo3_estrutura_de_dados.arvores
 
-data class Node<T>(val value: T, var left: Node<T>? = null, var right: Node<T>? = null) {
+import kotlin.math.abs
+import kotlin.math.max
+
+data class Node<T>(
+    val value: T,
+    var left: Node<T>? = null,
+    var right: Node<T>? = null,
+    var height: Int = 1
+) {
 
     fun isLeaf(): Boolean {
         return left == null && right == null
@@ -36,37 +44,112 @@ data class Node<T>(val value: T, var left: Node<T>? = null, var right: Node<T>? 
     }
 }
 
+fun <T> Node<T>?.height(): Int {
+    return this?.height ?: 0
+}
+
 class Tree<T : Comparable<T>> {
 
     private var root: Node<T>? = null
+
+    /**
+     * Se retornar >= 0 está balanceada
+     * Caso contrário não está balanceada
+     */
+    fun isBalanced(node: Node<T>? = root): Int {
+        if (node == null) return 0
+
+        val leftHeight = isBalanced(node.left)
+        if (leftHeight < 0)
+            return -1
+
+        val rightHeight = isBalanced(node.right)
+        if (rightHeight < 0)
+            return -1
+
+        if (abs(leftHeight - rightHeight) <= 1) {
+            // está balanceado
+            return max(leftHeight, rightHeight) + 1
+        } else {
+            return -1
+        }
+    }
+
+    fun rotateLeft(node: Node<T>): Node<T>? {
+        println("Rotate left " + node.value)
+        val rightNode = node.right
+        val leftOfRightNode = rightNode?.left
+
+        rightNode?.left = node
+        node.right = leftOfRightNode
+
+        node.height = max(node.left.height(), node.right.height()) + 1
+        rightNode?.height = max(rightNode?.left.height(), rightNode?.right.height() )
+
+        return rightNode
+    }
+
+    fun rotateRight(node: Node<T>): Node<T>? {
+        println("Rotate right " + node.value)
+        val leftNode = node.left
+        val rightOfLeftNode = leftNode?.right
+
+        leftNode?.right = node
+        node.left = rightOfLeftNode
+
+        node.height = max(node.left.height(), node.right.height())
+        leftNode?.height = max(leftNode?.left.height(), leftNode?.right.height())
+
+        return leftNode
+    }
 
     fun add(value: T) {
 
         if (root == null) {
             root = Node(value)
         } else {
-            add(root!!, value)
+            root = add(root, value)
         }
     }
 
-    private fun add(node: Node<T>, value: T) {
-        if (node.value >= value) {
-            if (node.left == null) {
-                println("add esquerda ${node.value}")
-                node.left = Node(value)
-            } else {
-                println("esquerda")
-                add(node.left!!, value)
-            }
+    private fun add(node: Node<T>?, value: T): Node<T>? {
+        if (node == null)
+            return Node(value)
+
+        if (node.value > value) {
+            // inserir a esquerda
+            node.left = add(node.left, value)
+        } else if (node.value < value) {
+            // inserir a direita
+            node.right = add(node.right, value)
         } else {
-            if (node.right == null) {
-                println("add direita ${node.value}")
-                node.right = Node(value)
-            } else {
-                println("direita")
-                add(node.right!!, value)
-            }
+            // não inserimos valores repetidos
+            return node
         }
+
+        node.height = 1 + max(node.left.height(), node.right.height())
+
+        val balance = node.left.height() - node.right.height()
+
+        if (balance > 1 && node.left!!.value > value) {
+            return rotateRight(node)
+        }
+
+        if (balance < -1 && node.right!!.value < value) {
+            return rotateLeft(node)
+        }
+
+        if (balance > 1 && node.left!!.value < value) {
+            node.right = rotateLeft(node.left!!.right!!)
+            return rotateRight(node)
+        }
+
+        if (balance < -1 && node.right!!.value > value) {
+            node.left = rotateRight(node.right!!.left!!)
+            return rotateLeft(node)
+        }
+
+        return node
     }
 
     fun search(value: T): Boolean {
@@ -117,28 +200,58 @@ class Tree<T : Comparable<T>> {
     private fun toString(node: Node<T>?): String {
         if (node == null) return ""
 
-        return node.value.toString() + " " + toString(node.left) + " " + toString(node.right)
+        return node.value.toString() +
+                " " +
+                toString(node.left) + " " +
+                toString(node.right)
+    }
+
+    // In Order, Post Order, Pre Order
+    // In Order = esq nó direita
+    // Post Order = direita nó esquerda
+    // Pre Order = nó esquerda direita
+
+    fun preOrder(node: Node<T>? = root) {
+        if (node == null) return
+
+        println(node.value)
+        preOrder(node.left)
+        preOrder(node.right)
+    }
+
+    fun inOrder(node: Node<T>? = root) {
+        if (node == null) return
+
+        inOrder(node.left)
+        println(node.value)
+        inOrder(node.right)
+    }
+
+    fun postOrder(node: Node<T>? = root) {
+        if (node == null) return
+
+        postOrder(node.right)
+        println(node.value)
+        postOrder(node.left)
     }
 }
 
 fun main() {
     val tree = Tree<Int>()
     tree.add(8)
+    println(tree.isBalanced()) //true
     tree.add(5)
+    println(tree.isBalanced()) // true
     tree.add(4)
-    tree.add(7)
-    tree.add(9)
+    println(tree.isBalanced())
     tree.add(10)
+    println(tree.isBalanced())
+    tree.add(9)
 
-    println(tree.toString())
-
-    println(tree.search(4)) // true
-    println(tree.search(6)) // false
-    println(tree.search(9))
-    println(tree.search(8))
-    println(tree.search(10))
-
-    tree.remove(7)
-    tree.remove(9)
-    println(tree)
+    println("------------")
+    tree.inOrder()
+    println("------------")
+    tree.postOrder()
+    println("------------")
+    tree.preOrder()
 }
